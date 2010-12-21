@@ -93,8 +93,8 @@ end
 
 
 def friends_of(name)
-  data = open("http://feeds.twitter.com/v2/json/networkmembers/#{name}").read
-  usernames = JSON.parse(data).map { |values| values["user"] }
+  data = open("http://api.twitter.com/1/statuses/friends.json?screen_name=#{name}").read
+  usernames = JSON.parse(data).map { |values| values["screen_name"] }
   usernames
 rescue OpenURI::HTTPError
   []
