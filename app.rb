@@ -14,12 +14,12 @@ set :database, (ENV['DATABASE_URL'] || 'sqlite:///tmp/delpin3.db')
 migration "create mappings" do
   database.create_table :mappings do
     primary_key :id
-    text        :delicious
+    text        :twitter
     text        :pinboard
     timestamp   :created_at, :null => false
     timestamp   :updated_at, :null => false
 
-    index :delicious, :unique => true
+    index :twitter, :unique => true
   end
 end
 
@@ -39,18 +39,18 @@ get '/' do
 end
 
 post '/' do
-  delicious = params[:delicious].to_s.downcase
+  twitter = params[:twitter].to_s.downcase
   pinboard = params[:pinboard].to_s.downcase
-  pinboard = delicious if pinboard.empty?
-  if delicious.empty?
+  pinboard = twitter if pinboard.empty?
+  if twitter.empty?
     return "Please provide names."
   end
-  old_mapping = Mapping[:delicious => delicious]
+  old_mapping = Mapping[:twitter => twitter]
   if old_mapping
     old_mapping.update(:pinboard => pinboard, :updated_at => Time.now)
   else
     Mapping.create(
-      :delicious => delicious,
+      :twitter => twitter,
       :pinboard => pinboard,
       :created_at => Time.now, :updated_at => Time.now
     )
@@ -61,9 +61,9 @@ end
 
 get '/export.json' do
   content_type :json
-  mappings = Mapping.select(:delicious, :pinboard).order(:delicious)
+  mappings = Mapping.select(:twitter, :pinboard).order(:twitter)
   if params[:different]
-    mappings = mappings.where('delicious != pinboard')
+    mappings = mappings.where('twitter != pinboard')
   end
   mappings.map { |m| m.values }.to_json
 end
@@ -93,7 +93,7 @@ end
 
 
 def friends_of(name)
-  data = open("http://feeds.delicious.com/v2/json/networkmembers/#{name}").read
+  data = open("http://feeds.twitter.com/v2/json/networkmembers/#{name}").read
   usernames = JSON.parse(data).map { |values| values["user"] }
   usernames
 rescue OpenURI::HTTPError

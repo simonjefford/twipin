@@ -45,8 +45,8 @@
       %h2 Add your usernames for others to find
       %form{ :method => 'post', :action => '' }
         %p
-          %label{ :for => "delicious" } Your Twitter username:
-          %input{ :type => "text", :name => "delicious" }
+          %label{ :for => "twitter" } Your Twitter username:
+          %input{ :type => "text", :name => "twitter" }
         %p
           %label{ :for => "pinboard" } Your Pinboard username:
           %input{ :type => "text", :name => "pinboard" }
@@ -62,7 +62,7 @@
         %ul
           - @mappings.each do |mapping|
             %li
-              %a{ :href => "http://delicious.com/#{h mapping.delicious}"}=h mapping.delicious
+              %a{ :href => "http://twitter.com/#{h mapping.twitter}"}=h mapping.twitter
               &rarr;
               %a{ :href => "http://pinboard.in/u:#{h mapping.pinboard}"}=h mapping.pinboard
 
@@ -81,9 +81,9 @@
         - else
           %ul.friends
             - @friends.each_with_index do |friend, index|
-              - mapping = Mapping[:delicious => friend.downcase]
+              - mapping = Mapping[:twitter => friend.downcase]
               %li
-                %a{ :href => "http://delicious.com/#{h friend}"}=h friend
+                %a{ :href => "http://twitter.com/#{h friend}"}=h friend
                 &rarr;
                 %span{ :id => "friend-#{index}" }
                   - if mapping && (pinboard = mapping.pinboard)
